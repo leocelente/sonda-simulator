@@ -73,7 +73,7 @@ class Balloon():
     area: float = np.pi * radius * radius
     
     # print(f"calculating drag at {altitude} and vel: {velocity} given air_den {air_density(altitude)}")
-    return (1/2) * self.drag_coeff * Air.density(altitude) * area * ((velocity)*velocity)
+    return (1/2) * self.drag_coeff * Air.density(altitude) * area * (abs(velocity)*velocity)
 
   def mass(self):
     # Expected Helium Mass 
