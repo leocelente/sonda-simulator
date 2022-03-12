@@ -4,7 +4,7 @@ from Air import g
 '''
 Mass:           Kilogram
 Preassure:      Pascal
-Temperature:    Celcius
+Temperature:    Kelvin
 Altitude:       meter
 Force:          Newton
 Time:           seconds

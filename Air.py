@@ -39,7 +39,7 @@ M = 0.0289644
 
 def temperature(altitude: float) -> float:
   '''
-  Calculates Temperature in *Celcius* at certain altitude in meters
+  Calculates Temperature in *Kelvin* at certain altitude in meters
   '''
   out: float = 0
   if altitude < 11e3:
@@ -50,7 +50,7 @@ def temperature(altitude: float) -> float:
   else:
     out = -131.21 + 0.00299 * altitude
     # raise Exception()
-  return out
+  return Utils.kelvin(out)
 
 
 def pressure(altitude: float) -> float:
@@ -59,12 +59,12 @@ def pressure(altitude: float) -> float:
   '''
   out: float = 0
   if altitude < 11e3:
-    out = P_sl0 * (Utils.kelvin(temperature(altitude))/288.08)**5.256
+    out = P_sl0 * (temperature(altitude)/288.08)**5.256
   elif altitude < 25e3:
     out = P_sl1 * np.exp((1.73 - 0.000157*altitude))
   # elif altitude < 33e3: 
   else:
-    out = P_sl2 * (Utils.kelvin(temperature(altitude))/216.6)**(-11.388)
+    out = P_sl2 * (temperature(altitude)/216.6)**(-11.388)
     # raise Exception()
   return out
 
@@ -74,7 +74,7 @@ def density(altitude : float) -> float:
   Calculates the air density in kilogram/cubic meter at altitude in meter
   '''
   P_kpa = pressure(altitude)*1e-3
-  K = Utils.kelvin(temperature(altitude))
+  K = temperature(altitude)
   p = P_kpa / (.2869 * K)
   return p
 
