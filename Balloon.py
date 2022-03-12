@@ -1,6 +1,6 @@
 import numpy as np
 import Air
-
+from Air import g
 '''
 Mass:           Kilogram
 Preassure:      Pascal
@@ -78,7 +78,7 @@ class Balloon():
     '''
     Total Weight
     '''
-    return self.mass() * Air.g
+    return self.mass() * g
 
   def buoyancy(self, altitude: float) -> float:
     '''
@@ -86,7 +86,7 @@ class Balloon():
     '''
 
     # print(f"calculating buoyancy at {altitude} given volume {volume(altitude)}, air_den {air_density(altitude)} and gas_den {density(altitude)}")
-    return Air.g * self.volume(altitude) * (Air.density(altitude) - self.density(altitude)) 
+    return g * self.volume(altitude) * (Air.density(altitude) - self.density(altitude)) 
 
 
   def acceleration(self, altitude: float, velocity: float) -> float:
