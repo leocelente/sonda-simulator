@@ -31,13 +31,20 @@ class Balloon():
     Calculates (simplified) the balloon's volume in cubic meters at altitude in meters
     '''
     
-    delta_radius: float = ( ((self.r_i - self.r_f)/(Air.P_sl0 - Air.P_sl2)) * (Air.pressure(altitude) - Air.P_sl2) )
-    radius: float = self.r_f + delta_radius
+    # delta_radius: float = ( ((self.r_i - self.r_f)/(Air.P_sl0 - Air.P_sl2)) * (Air.pressure(altitude) - Air.P_sl2) )
+    # radius: float = self.r_f + delta_radius
     
-    if delta_radius >= 0.0: # in theory this condition means burst
+    # P V = n R T
+    # 
+    k: float = Air.pressure(0) * 4/3*np.pi*self.r_i**3/Air.temperature(altitude)
+    burst_vol: float = 4/3*np.pi*self.r_f**3
+
+    vol: float = k * Air.temperature(altitude)/Air.pressure(altitude)
+
+    if vol > burst_vol: # in theory this condition means burst
       return 0
 
-    vol: float = (4/3)*np.pi*( radius )**3
+    # vol: float = (4/3)*np.pi*( radius )**3
     return vol
 
   def density(self, altitude: float) -> float:
