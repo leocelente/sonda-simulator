@@ -26,23 +26,29 @@ def main():
   plt.subplot(1, 5, 1)
   plt.plot(Ps,hs)  
   plt.legend(["Pressure"])
-
+  plt.grid()
+  
   plt.subplot(1, 5, 2)
   plt.plot(Ts,hs)
   plt.legend(["Temperature"])
-
+  plt.xlim([200,280])
+  plt.grid()
+  
   plt.subplot(1, 5, 3)
   plt.plot(Vs, hs)
   plt.legend(["Balloon Volume"])
-
+  plt.grid()
+  
   plt.subplot(1, 5, 4)
   plt.plot( ps, hs)
   plt.legend(["Density"])
-
+  plt.grid()
+  
   plt.subplot(1, 5, 5)
   plt.plot(pbs, hs)
   plt.legend(["Balloon Density"])
-
+  plt.grid()
+  
   # Plot Simulation Data
   data = np.array(data)
   plt.figure()
