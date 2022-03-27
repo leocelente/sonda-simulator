@@ -9,6 +9,8 @@ the design of an Altitude Control System.
 **Not Working**
 Basic models don't converge. 
 
+![screenshot](assets/quaselá.png)
+
 ## Dependencies
 Just: 
  - `numpy`

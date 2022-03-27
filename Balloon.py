@@ -69,7 +69,7 @@ class Balloon():
     d: float = -(1/2) * self.drag_coeff * Air.density(altitude) * area * (abs(velocity)*velocity)
     if(isnan(d) or isinf(d) or abs(d) > 100):
       print(f"Cd: {self.drag_coeff}, rho_a: {Air.density(altitude)}, A: {area}, v: {velocity}, v2: {abs(velocity)*velocity}")
-      raise RuntimeError()
+      # raise RuntimeError()
     return d
 
 
