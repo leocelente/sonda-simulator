@@ -2,7 +2,6 @@
 from Simulator import Simulate
 from matplotlib import pyplot as plt
 import numpy as np
-from nptyping import NDArray
 import Air
 from Balloon import Balloon
 
@@ -11,10 +10,11 @@ def main():
                       0.0 # velocity
   ])
   balloon: Balloon = Balloon()
-  tfinal: float = 2 * 60 * 60 
+  balloon.burst = False
+  tfinal: float = 3 * 60 * 60 
   data, time = Simulate(state, balloon.Model, time_start = 0, time_end = tfinal, time_step=1)
   
-  hs = np.linspace(0, 30e3, 1000, dtype=float)
+  hs = np.linspace(0, 35e3, 1000, dtype=float)
 
   # Plot individual Models
   Ps = [Air.pressure(h) for h in hs]
@@ -22,7 +22,7 @@ def main():
   ps = [Air.density(h) for h in hs]
   Vs = [balloon.volume(h) for h in hs]
   pbs = [balloon.density(h) for h in hs]
-
+  
   plt.subplot(1, 5, 1)
   plt.plot(Ps,hs)  
   plt.legend(["Pressure"])
@@ -51,14 +51,22 @@ def main():
   
   # Plot Simulation Data
   data = np.array(data)
-  plt.figure()
+  fig = plt.figure()
+  fig.tight_layout(h_pad=2)
   plt.subplot(2, 1, 1)
-  # plt.ylim([0, 30e3])
+  plt.title("Altitude")
+  plt.ylim([0, 35e3])
   plt.plot(time/60, data[:, 0])
+  plt.ylabel("Altitude (m)")
+  plt.xlabel("Time (min)")
   plt.grid()
+ 
   plt.subplot(2, 1, 2)
+  plt.title("Ascent Rate")
   plt.plot(time/60, data[:, 1])
-  # plt.ylim([0, 1e2])
+  plt.ylabel("Speed (m)")
+  plt.xlabel("Time (min)")
+  plt.ylim([-30, 20])
   plt.grid()
 
   plt.show()
