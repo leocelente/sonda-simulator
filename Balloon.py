@@ -1,5 +1,4 @@
 from cmath import isinf, isnan
-from shutil import ExecError
 import numpy as np
 import Air
 from Air import g, BoltzC, R
@@ -67,9 +66,6 @@ class Balloon():
       radius = ((3.0/4.0/np.pi) * self.volume(altitude)) ** (1/3)
       area: float = np.pi * radius * radius
     d: float = -(1/2) * self.drag_coeff * Air.density(altitude) * area * (abs(velocity)*velocity)
-    if(isnan(d) or isinf(d) or abs(d) > 100):
-      print(f"Cd: {self.drag_coeff}, rho_a: {Air.density(altitude)}, A: {area}, v: {velocity}, v2: {abs(velocity)*velocity}")
-      # raise RuntimeError()
     return d
 
 
@@ -104,9 +100,6 @@ class Balloon():
     Calculates the acceleration in meters per second square from altitude and (previous dt) velocity
     '''
     acc: float  = (self.buoyancy(altitude) + self.weight() + self.drag(altitude, velocity)) / self.mass()
-    if(acc < -11):
-      print(f"B: {self.buoyancy(altitude)}, W: {self.weight()}, D: {self.drag(altitude, velocity)}, rho_a: {Air.density(altitude)}")
-      # raise RuntimeWarning()
     return acc
 
 
@@ -122,25 +115,6 @@ class Balloon():
                         self.acceleration(current_altitude, current_velocity) # velocity
     ])
 
-    # Convenience variables for debugging
-    vol: float = self.volume(current_altitude)
-    rho: float = self.density(current_altitude)
-    buoy: float = self.buoyancy(current_altitude)
-    drag: float = self.drag(current_altitude, current_velocity)
-    weight: float = self.weight()
-    mass: float = self.mass() 
-    acc: float = self.acceleration(current_altitude, current_velocity)
-    
-    if self._i % 12 == 0: # stupid debugging
-      print(f"alt: {current_altitude:.2f}m,\tvol: {vol:.2f}m3,\
-\tbuoy: {buoy:.2f}N,\
-\tdrag: {drag:.2f}N,\
-\trho: {rho:.4f}kg/m3,\
-\tweight: {weight:.2f}N,\
-\tmass: {mass:.1f}kg,\
-\tvel: {current_velocity:.2f}m/s,\
-\tacc: {acc:.4f}m/s2")
     self._i += 1
-
     return delta
 
