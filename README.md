@@ -17,6 +17,14 @@ Just:
 
 Even so, please, use a virtual environment
 
+## How to use
+```shell
+$ virtualenv .venv
+$ source .venv/bin/activate
+(.venv) $ pip3 install -r requirements.txt
+(.venv) $ python3 main.py
+```
+
 ## Code Structure
 
  - `Balloon.py`: Contains the numeric models (inside a Class) that calculate parameters, such as: 
