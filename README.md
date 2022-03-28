@@ -7,7 +7,7 @@ the design of an Altitude Control System.
 
 ## State
 **Not Working**
-Basic models don't converge. 
+Ascention seems to work, but descent diverges after a while.
 
 ![screenshot](assets/quaselá.png)
 
