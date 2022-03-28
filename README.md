@@ -1,14 +1,13 @@
 # Probe Simulator
-Python Simulation of a High Altitude Balloon ascending.
+Python Simulation of a High Altitude Balloon ascent and descent.
 
 ## Objective 
 Create a tool to help experiments involving HABs. Currently focusing efforts on
 the design of an Altitude Control System.
 
 ## State
-**Not Working**
-Ascention seems to work, but descent diverges after a while.
-
+**Working!**
+Seems to work, but a timestep = 1 fails to converge.
 ![screenshot](assets/funfando.png)
 
 ## Dependencies
