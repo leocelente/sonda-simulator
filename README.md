@@ -9,7 +9,7 @@ the design of an Altitude Control System.
 **Not Working**
 Ascention seems to work, but descent diverges after a while.
 
-![screenshot](assets/quaselá.png)
+![screenshot](assets/funfando.png)
 
 ## Dependencies
 Just: 
