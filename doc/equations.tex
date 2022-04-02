@@ -1,0 +1,102 @@
+\documentclass[a4paper, 12pt]{article}
+\usepackage{amssymb, amsmath, graphicx, xcolor}
+
+\usepackage{float, listings}
+\pagecolor[rgb]{0.,0.,0.}
+\color[rgb]{1,1,1}
+\renewcommand{\baselinestretch}{1.5}
+\usepackage{courier} 
+\lstset{basicstyle=\footnotesize\ttfamily}
+\lstset{frame=shadowbox} 
+
+\usepackage{multirow}
+\usepackage{geometry}
+\geometry{a4paper,total={7in, 9in}}
+
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage[brazilian]{babel}
+\usepackage{helvet}
+
+\title{Equações do Simulador de Sondas Atmosféricas}
+\author{Leonardo Celente}
+\begin{document}
+\maketitle
+\tableofcontents
+\pagebreak
+\section{Atmosfera Padrão}
+\subsection {Temperatura}
+
+\begin{equation}
+  T_{ar}(h)  = \left\{
+  \begin{array}{ll}
+    -x & \quad x \leq 0 \\
+    -x & \quad x \leq 0 \\
+    x  & \quad x \geq 0
+  \end{array}
+  \right.
+\end{equation}
+
+
+\subsection {Pressão}
+
+\begin{equation}
+  p_{ar}(h)  = \left\{
+  \begin{array}{ll}
+    -x & \quad x \leq 0 \\
+    -x & \quad x \leq 0 \\
+    x  & \quad x \geq 0
+  \end{array}
+  \right.
+\end{equation}
+
+
+\subsection {Densidade}
+\begin{equation}
+  \rho_{ar}(h) = \frac{p_{ar}(h)}{286.9 \, T_{ar}(h)}
+\end{equation}
+
+\section {Balão}
+\subsection {Densidade Interna}
+
+Partindo da Lei dos Gases:
+
+\begin{equation}
+  \rho (h) = p(h) \frac{R}{M_{he}}T(h)
+\end{equation}
+
+Assumindo que a temperatura do balão é a mesma do ar, então $T(h) = T_{ar}(h)$.
+Também assumindo que a pressão do balão também está em equilibrio $p(h) = p_{ar}(h)$.
+
+\subsection {Volume}
+Essa é estranha. O volume é calculado assumindo o equilibrio de forças do
+empuxo.
+\begin{equation}
+  V(h) =  \frac{m_{total}}{\rho_{ar}(h) - \rho(h)}
+\end{equation}
+
+\subsection {Peso}
+Bem simples:
+\begin{equation}
+  W = -\left( m_{balao} + m_{payload} + m_{helio} \right) g
+\end{equation}
+
+\subsection {Empuxo}
+\begin{equation}
+  E = g \, \rho_{ar}(h) V_{balao} \,
+\end{equation}
+\subsection {Arrasto}
+\begin{equation}
+  D = -\frac{1}{2} \, C_d \, A(h) \, \rho_{ar}(h) \,  \lvert \vec{v} \rvert \cdot \vec{v}
+\end{equation}
+Onde $A(h)$ é calculada ainda assumindo um balão esférico.
+\begin{gather}
+  r(h) = \frac{3\pi}{4} \sqrt[3]{V(h)} \\
+  A(h) = \pi \left[r(h)\right]^2
+\end{gather}
+\subsection {Aceleração}
+\begin{equation}
+  \dot h = a = \frac{E + W + D}{m_{total}}
+\end{equation}
+
+\end{document}
