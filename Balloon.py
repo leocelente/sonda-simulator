@@ -115,6 +115,14 @@ class Balloon():
                         self.acceleration(current_altitude, current_velocity) # velocity
     ])
 
+    probe(self.volume(current_altitude), 0)
+    probe(self.buoyancy(current_altitude), 1)
+    probe(self.drag(current_altitude, current_velocity), 2)
+    probe(self.density(current_altitude), 3)
+    probe(self.acceleration(current_altitude, current_velocity), 4)
+    probe(self.weight(), 5)
+
+      
     self._i += 1
     return delta
 
