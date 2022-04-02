@@ -14,7 +14,13 @@ def main():
                       0.0 # velocity
   ])
 
-  balloon: Balloon = Balloon()
+  balloon = Balloon(balloon_mass=1000,                # 
+                              payload_mass=1.8,       #
+                              initial_diameter=1.4,   #
+                              burst_diameter=8,       #
+                              drag_coef=0.35,         #
+                              parachute_diameter=1.5, #
+                              parachute_drag_coeff=0.6)
   tfinal: float = 3 * 60 * 60 
   data, time = Simulate(state, balloon.Model, time_start = 0, time_end = tfinal, time_step=.5, status=status)
   

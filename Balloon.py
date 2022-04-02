@@ -26,8 +26,35 @@ class Balloon():
   # Balllon Burst Radius
   r_f: float = 8.0 / 2 # m
   # Balllon Drag Coefficient
-  drag_coeff = 0.35
-  burst: int = 0
+  burst: int = 0 
+
+  # Parachute Drag Coefficient
+  parachute_Dcoeff: float = 0.65
+  # Parachute Radius
+  parachute_r: float = 1.3
+
+
+  def __init__(self, balloon_mass: float, payload_mass: float, initial_diameter: float, burst_diameter: float, drag_coef: float, parachute_diameter: float, parachute_drag_coeff: float) -> None:
+    '''
+    Creates balloon object
+    balloon_mass: 1000g, 2000g etc
+    payload_mass: in kilograms
+    initial_diameter: balloon start diameter
+    burst_diameter: 
+    drag_coef: Drag Coefficient
+    parachute_diameter:
+    parachute_drag_coeff:
+    '''
+    self.m_balloon = balloon_mass * 1e-3
+    self.m_payload = payload_mass
+    self.r_i = initial_diameter /2
+    self.r_f = burst_diameter /2
+    self.drag_coeff = drag_coef
+    self.parachute_Dcoeff = parachute_drag_coeff
+    self.parachute_r = parachute_diameter /2
+    print(vol_sphere(self.r_i) * self.density(0))
+
+
 
   def volume(self, altitude: float) -> float:
     '''
