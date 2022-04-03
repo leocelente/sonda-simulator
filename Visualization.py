@@ -59,8 +59,9 @@ def Viz(data, time) -> None:
   ax3 = ax2.twinx()
   ax3.plot(minutes, density, color='cyan', linewidth=2, label="Density ($\\rho_{He}$) ")
   ax3.set_ylabel("Density [$kg/m^3$]")
-  ax3.legend()
-  plt.xlabel("Time [minutes]")
+  lines, labels = ax2.get_legend_handles_labels()
+  lines2, labels2 = ax3.get_legend_handles_labels()
+  ax2.legend(lines + lines2, labels + labels2, loc=0)
   
   plt.show()
 
