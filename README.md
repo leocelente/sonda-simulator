@@ -7,8 +7,8 @@ the design of an Altitude Control System.
 
 ## State
 **Working!**
-Seems to work, but a timestep = 1 fails to converge.
-![screenshot](assets/bonito.png)
+Seems to work, but a timestep >= 1s fails to converge.
+![screenshot](assets/screenshot.png)
 
 ## Dependencies
 Just: 
