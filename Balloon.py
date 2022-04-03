@@ -61,7 +61,7 @@ class Balloon():
     print(f"Balloon:\n \tSize: {balloon_mass}g \n\
       \tInitial Diameter: {initial_diameter:.2f}m\n\
       \tBurst Diameter: {burst_diameter:.2f}m\n\
-      \tExpected He Mass:  {he_mass:.4f}kg/m3\n\
+      \tExpected He Mass:  {he_mass:.4f}kg\n\
       \tDrag Coefficient: {drag_coef:.3f}")
 
     print(f"Parachute: \n \tOpen Diameter: {parachute_diameter:.2f}m\n \tDrag Coefficient: {parachute_drag_coeff:.3f}")
