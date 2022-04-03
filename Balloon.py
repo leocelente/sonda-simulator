@@ -30,6 +30,8 @@ class Balloon():
   drag_coeff: float = 0.35
   # Helps check if this iteration is a burst
   burst: int = 0 
+  # Check if it hit the ground
+  touchdown: int = 0
 
   # Parachute Drag Coefficient
   parachute_Dcoeff: float = 0.65
@@ -138,8 +140,10 @@ class Balloon():
     '''
     Calculates the acceleration in meters per second square from altitude and (previous dt) velocity
     '''
-     
+    
     acc: float = (self.buoyancy(altitude) + self.weight() + self.drag(altitude, velocity)) / self.mass()
+    if(self.touchdown >= 4 and abs(velocity) > 0):
+      acc = (0 - velocity )/(0.5 - 0) #! Assumption: Contact time of 0.5s 
     return acc
 
 
@@ -150,6 +154,10 @@ class Balloon():
     '''
     current_altitude: float  = state[0][0]          # altitude
     current_velocity: float  = state[1][0]          # velocity
+
+
+    if(current_altitude < 1e-3):
+      self.touchdown += 1
 
     delta  = np.vstack([ current_velocity, # altitude
                         self.acceleration(current_altitude, current_velocity) # velocity
