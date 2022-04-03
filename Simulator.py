@@ -18,6 +18,7 @@ def Simulate(state: list[float], model, time_start:float=0, time_end: float=30, 
   '''
   Run simulation of `model` from `time_start` to `time_end`
   '''
+  print(f"Simulating from {time_start}s to {time_end}s with dt of {time_step}s")
   time = np.arange(time_start, time_end, time_step, dtype=float)
 
   view_state = []

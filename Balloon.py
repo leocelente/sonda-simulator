@@ -55,7 +55,15 @@ class Balloon():
     self.drag_coeff = drag_coef
     self.parachute_Dcoeff = parachute_drag_coeff
     self.parachute_r = parachute_diameter /2
-    print(vol_sphere(self.r_i) * self.density(0))
+    he_mass = vol_sphere(self.r_i) * self.density(altitude=0)
+    print(f"Balloon:\n \tSize: {balloon_mass}g \n\
+      \tInitial Diameter: {initial_diameter:.2f}m\n\
+      \tBurst Diameter: {burst_diameter:.2f}m\n\
+      \tExpected He Mass:  {he_mass:.4f}kg/m3\n\
+      \tDrag Coefficient: {drag_coef:.3f}")
+
+    print(f"Parachute: \n \tOpen Diameter: {parachute_diameter:.2f}m\n \tDrag Coefficient: {parachute_drag_coeff:.3f}")
+    
 
 
 
