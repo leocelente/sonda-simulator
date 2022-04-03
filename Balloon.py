@@ -85,7 +85,10 @@ class Balloon():
   def density(self, altitude: float) -> float:
     '''
     Calculates the balloon's internal gas density in kilogram per cubic meter at altitude in meters
-    '''    
+    '''
+    if(self.burst >= 4): # Helium density doesn't make sense without balloon
+      return 0
+
     temperature: float = Air.temperature(altitude) #! Assumption
     pressure: float = Air.pressure(altitude) #! Assumption
     density: float = pressure / (R / molar_mass_he * temperature)  
