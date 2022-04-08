@@ -102,8 +102,8 @@ class Balloon():
     Calculates the drag force at altitude in meters while moving at velocity in meters per second
     '''
     if(self.burst >= 4): 
-      self.drag_coeff = 0.65
-      area = np.pi * (1.5/2)**2
+      self.drag_coeff = self.parachute_Dcoeff
+      area = np.pi * (self.parachute_r)**2
     else: 
       radius = ((3.0/4.0/np.pi) * self.volume(altitude)) ** (1/3)
       area: float = np.pi * radius * radius
