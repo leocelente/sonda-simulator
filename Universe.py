@@ -6,7 +6,7 @@ g = 9.80665
 # 
 M = 0.0289644
 BoltzC = 1.38e-23
-molar_mass_he = 4.0026e-3
+molar_mass_he = 4.0026e-3 # kg/mol
     
 
 def vol_sphere(radius: float) -> float:
