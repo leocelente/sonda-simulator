@@ -20,11 +20,10 @@ def main():
   print("-- Started Simulation --")
  
   # Simulate for 3 hours
-  tfinal: float = 3 * 60 * 60 
-  ty_res = t.gmtime(tfinal)
-  res = t.strftime("%Hh%Mm%Ss",ty_res)
+  tfinal: float = 3 * 60 * 60  
+  time_str = t.strftime("%Hh%Mm%Ss", t.gmtime(tfinal))
 
-  print(f"Duration: {res}")
+  print(f"Duration: {time_str}")
 
   balloon = Balloon(balloon_mass=1000,                # 
                               payload_mass=1.8,       #
