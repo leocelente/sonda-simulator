@@ -8,13 +8,12 @@ def Viz(data, time) -> None:
   volumes =       data[:, 2]
   buoyancy =      data[:, 3]
   drag =          data[:, 4]
-  density =       data[:, 5]
-  acceleration =  data[:, 6]
-  weights =       data[:, 7]
+  acceleration =  data[:, 5]
+  weights =       data[:, 6]
   
   minutes =       time / 60
 
-  fig = plt.figure(figsize=(14, 8), constrained_layout=True)
+  fig = plt.figure(figsize=(14, 8))
   fig.suptitle('Simulation Results', fontsize=16)
 
   ax = plt.subplot(3,2,1)
@@ -55,13 +54,6 @@ def Viz(data, time) -> None:
   plt.ylabel("Volume [$m^3$]")
   plt.xlabel("Time [minutes]")
   plt.grid()
-  
-  ax3 = ax2.twinx()
-  ax3.plot(minutes, density, color='cyan', linewidth=2, label="Density ($\\rho_{He}$) ")
-  ax3.set_ylabel("Density [$kg/m^3$]")
-  lines, labels = ax2.get_legend_handles_labels()
-  lines2, labels2 = ax3.get_legend_handles_labels()
-  ax2.legend(lines + lines2, labels + labels2, loc=0)
   
   plt.show()
 

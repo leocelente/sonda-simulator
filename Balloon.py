@@ -69,8 +69,6 @@ class Balloon():
     print(f"Parachute: \n \tOpen Diameter: {parachute_diameter:.2f}m\n \tDrag Coefficient: {parachute_drag_coeff:.3f}")
     
 
-
-
   def volume(self, altitude: float) -> float:
     '''
     Calculates (simplified) the balloon's volume in cubic meters at altitude in meters
@@ -79,24 +77,18 @@ class Balloon():
       return 0
 
     burst_vol: float = vol_sphere(self.r_f)
-    vol: float = self.mass() / (Air.density(altitude) - self.density(altitude)) 
-    
+
+    # Ideal Gas Law
+    # initial gas mass
+    m_0: float  = vol_sphere(self.r_i) * Air.p_he
+    m_gas = m_0                                     #! Assumption
+    pressure: float = Air.pressure(altitude)        #! Assumption
+    temperature: float  = Air.temperature(altitude) #! Assumption
+    vol: float = m_gas * R * temperature / pressure / molar_mass_he
+
     if vol > burst_vol: # in theory this condition means burst
       self.burst += 1
-    
     return vol
-
-  def density(self, altitude: float) -> float:
-    '''
-    Calculates the balloon's internal gas density in kilogram per cubic meter at altitude in meters
-    '''
-    if(self.burst >= 4): # Helium density doesn't make sense without balloon
-      return 0
-
-    temperature: float = Air.temperature(altitude) #! Assumption
-    pressure: float = Air.pressure(altitude) #! Assumption
-    density: float = pressure / (R / molar_mass_he * temperature)  
-    return density
 
 
   def drag(self, altitude: float, velocity: float) -> float:
@@ -109,18 +101,20 @@ class Balloon():
     else: 
       radius = ((3.0/4.0/np.pi) * self.volume(altitude)) ** (1/3)
       area: float = np.pi * radius * radius
+    
     d: float = -(1/2) * self.drag_coeff * Air.density(altitude) * area * (abs(velocity)*velocity)
     return d
 
 
   def mass(self) -> float:
     # Expected Helium Mass 
-    m_gas: float =  vol_sphere(self.r_i) * self.density(0)
+    m_gas: float =  vol_sphere(self.r_i) * Air.p_he
 
     if(self.burst >= 4):
         self.m_balloon = 0
         m_gas = 0
-    mass: float = self.m_payload + self.m_balloon +  m_gas
+    
+    mass: float = self.m_payload + m_gas # + self.m_balloon #! Por que??
     return mass
 
 
@@ -168,11 +162,9 @@ class Balloon():
     probe(self.volume(current_altitude), 0)
     probe(self.buoyancy(current_altitude), 1)
     probe(self.drag(current_altitude, current_velocity), 2)
-    probe(self.density(current_altitude), 3)
-    probe(self.acceleration(current_altitude, current_velocity), 4)
-    probe(self.weight(), 5)
+    probe(self.acceleration(current_altitude, current_velocity), 3)
+    probe(self.weight(), 4)
 
-      
     self._i += 1
     return delta
 
