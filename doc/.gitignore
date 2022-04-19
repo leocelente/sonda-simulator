@@ -1,6 +1,3 @@
-*.aux
-*.toc
-*.log
-*fdb*
-*.gz
-*.fls
+*.*
+!*.tex
+!*.pdf

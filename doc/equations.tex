@@ -57,23 +57,17 @@
 \end{equation}
 
 \section {Balão}
-\subsection {Densidade Interna}
+\subsection {Volume}
 
 Partindo da Lei dos Gases:
+% vol: float = m_gas * R * temperature / pressure / molar_mass_he
 
 \begin{equation}
-  \rho (h) = p(h) \frac{R}{M_{he}}T(h)
+  V (h) =   T(h) R \frac{m_{gas}}{M_{he}}
 \end{equation}
 
 Assumindo que a temperatura do balão é a mesma do ar, então $T(h) = T_{ar}(h)$.
 Também assumindo que a pressão do balão também está em equilibrio $p(h) = p_{ar}(h)$.
-
-\subsection {Volume}
-Essa é estranha. O volume é calculado assumindo o equilibrio de forças do
-empuxo.
-\begin{equation}
-  V(h) =  \frac{m_{total}}{\rho_{ar}(h) - \rho(h)}
-\end{equation}
 
 \subsection {Peso}
 Bem simples:
