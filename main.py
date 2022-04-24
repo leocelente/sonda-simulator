@@ -8,6 +8,7 @@ from Instrument import probe
 from Balloon import Balloon
 from Visualization import Viz
 
+
 def status(percent):
     percent = percent * 100.0
     sys.stdout.write('Progress: \033[K' + ('%.2f' %  percent) + '%\r')
@@ -27,9 +28,9 @@ def main():
 
   balloon = Balloon(balloon_mass=1000,                # 
                               payload_mass=1.2,       #
-                              initial_diameter=1.4,   #
-                              burst_diameter=8,       #
-                              drag_coef=0.35,         #
+                              initial_diameter=1.909,   #
+                              burst_diameter=7.86,       #
+                                drag_coef=0.35,         #
                               parachute_diameter=1.5, #
                               parachute_drag_coeff=0.6)
 

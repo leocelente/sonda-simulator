@@ -26,4 +26,4 @@ class Prober:
         return out
 
     
-probe = Prober(5)
+probe = Prober(8)

@@ -57,23 +57,26 @@ class Balloon():
     self.drag_coeff = drag_coef
     self.parachute_Dcoeff = parachute_drag_coeff
     self.parachute_r = parachute_diameter /2
-    he_mass = vol_sphere(self.r_i) * Air.p_he
+    
+    vol_gas = vol_sphere(self.r_i)
+    m_gas = vol_gas * Air.p_he
     
     print(f"Payload Mass: {self.m_payload}kg")
     print(f"Balloon:\n \tSize: {balloon_mass}g \n\
       \tInitial Diameter: {initial_diameter:.2f}m\n\
+      \tInitial Volume: {vol_gas:.2f}m3\n\
       \tBurst Diameter: {burst_diameter:.2f}m\n\
-      \tExpected He Mass:  {he_mass:.4f}kg\n\
+      \tExpected He Mass:  {m_gas:.4f}kg\n\
       \tDrag Coefficient: {drag_coef:.3f}")
 
     print(f"Parachute: \n \tOpen Diameter: {parachute_diameter:.2f}m\n \tDrag Coefficient: {parachute_drag_coeff:.3f}")
-    
+
 
   def volume(self, altitude: float) -> float:
     '''
     Calculates (simplified) the balloon's volume in cubic meters at altitude in meters
     '''
-    if(self.burst >= 4):
+    if(self.burst):
       return 0
 
     burst_vol: float = vol_sphere(self.r_f)
@@ -87,7 +90,8 @@ class Balloon():
     vol: float = m_gas * R * temperature / pressure / molar_mass_he
 
     if vol > burst_vol: # in theory this condition means burst
-      self.burst += 1
+      self.burst = True
+
     return vol
 
 
@@ -95,9 +99,9 @@ class Balloon():
     '''
     Calculates the drag force at altitude in meters while moving at velocity in meters per second
     '''
-    if(self.burst >= 4): 
+    if(self.burst): 
       self.drag_coeff = self.parachute_Dcoeff
-      area = np.pi * (self.parachute_r)**2
+      area = np.pi * (self.parachute_r) ** 2
     else: 
       radius = ((3.0/4.0/np.pi) * self.volume(altitude)) ** (1/3)
       area: float = np.pi * radius * radius
@@ -107,14 +111,14 @@ class Balloon():
 
 
   def mass(self) -> float:
-    # Expected Helium Mass 
+    # Expected Helium Mass
     m_gas: float =  vol_sphere(self.r_i) * Air.p_he
 
-    if(self.burst >= 4):
-        self.m_balloon = 0
-        m_gas = 0
+    if(self.burst):
+      self.m_balloon = 0
+      self.m_gas = 0
     
-    mass: float = self.m_payload + m_gas # + self.m_balloon #! Por que??
+    mass: float = self.m_payload + self.m_balloon + m_gas
     return mass
 
 
@@ -122,23 +126,30 @@ class Balloon():
     '''
     Total Weight
     '''
-    return -self.mass() * g
+    m_gas: float = vol_sphere(self.r_i) * Air.p_he
+    return -(self.mass()) * g
 
+  def density(self, altitude:float):
+    if(self.burst):
+      return 0
+
+    m_gas: float =  vol_sphere(self.r_i) * Air.p_he
+    rho_he = m_gas / self.volume(altitude)
+    return rho_he
 
   def buoyancy(self, altitude: float) -> float:
     '''
     Calculates the Buoyancy force at a given altitude
-    '''    
-    return g * self.volume(altitude) * Air.density(altitude)
+    '''
+    return g * self.volume(altitude) * (Air.density(altitude) - self.density(altitude))
 
 
   def acceleration(self, altitude: float, velocity: float) -> float:
     '''
     Calculates the acceleration in meters per second square from altitude and (previous dt) velocity
     '''
-    
     acc: float = (self.buoyancy(altitude) + self.weight() + self.drag(altitude, velocity)) / self.mass()
-    if(self.touchdown >= 4 and abs(velocity) > 0):
+    if(self.touchdown >= 4):
       acc = (0 - velocity )/(0.5 - 0) #! Assumption: Contact time of 0.5s 
     return acc
 
@@ -164,6 +175,9 @@ class Balloon():
     probe(self.drag(current_altitude, current_velocity), 2)
     probe(self.acceleration(current_altitude, current_velocity), 3)
     probe(self.weight(), 4)
+    probe(Air.temperature(current_altitude), 5)
+    probe(Air.pressure(current_altitude), 6)
+    probe(Air.density(current_altitude), 7)
 
     self._i += 1
     return delta
