@@ -26,11 +26,11 @@ def main():
 
   print(f"Duration: {time_str}")
 
-  balloon = Balloon(balloon_mass=1000,                # 
-                              payload_mass=1.2,       #
-                              initial_diameter=1.909,   #
+  balloon = Balloon(balloon_mass=3000,                # 
+                              payload_mass=4,       #
+                              initial_volume=9,   #
                               burst_diameter=7.86,       #
-                                drag_coef=0.35,         #
+                              drag_coef=0.35,         #
                               parachute_diameter=1.5, #
                               parachute_drag_coeff=0.6)
 

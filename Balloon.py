@@ -1,7 +1,7 @@
 from cmath import isinf, isnan
 import numpy as np
 import Air
-from Universe import vol_sphere, molar_mass_he, g, R
+from Universe import radius_sphere, vol_sphere, molar_mass_he, g, R
 from Instrument import probe
 '''
 Mass:           Kilogram
@@ -22,6 +22,9 @@ class Balloon():
   # Balloon Mass
   m_balloon: float = 2000e-3
 
+  # Initial Gas Volume
+  vol_gas_i: float = 9
+
   # Balllon Initial Radius
   r_i: float = 1.4 / 2 # m
   # Balllon Burst Radius
@@ -39,12 +42,12 @@ class Balloon():
   parachute_r: float = 1.3
 
 
-  def __init__(self, balloon_mass: float, payload_mass: float, initial_diameter: float, burst_diameter: float, drag_coef: float, parachute_diameter: float, parachute_drag_coeff: float) -> None:
+  def __init__(self, balloon_mass: float, payload_mass: float, initial_volume: float, burst_diameter: float, drag_coef: float, parachute_diameter: float, parachute_drag_coeff: float) -> None:
     '''
     Creates balloon object
     balloon_mass: 1000g, 2000g etc
     payload_mass: in kilograms
-    initial_diameter: balloon start diameter
+    initial_volume: balloon filled volume (m3)
     burst_diameter: 
     drag_coef: Drag Coefficient
     parachute_diameter:
@@ -52,19 +55,18 @@ class Balloon():
     '''
     self.m_balloon = balloon_mass * 1e-3
     self.m_payload = payload_mass
-    self.r_i = initial_diameter /2
+    self.vol_gas = initial_volume
+    self.r_i = radius_sphere(initial_volume)
     self.r_f = burst_diameter /2
     self.drag_coeff = drag_coef
     self.parachute_Dcoeff = parachute_drag_coeff
     self.parachute_r = parachute_diameter /2
-    
-    vol_gas = vol_sphere(self.r_i)
-    m_gas = vol_gas * Air.p_he
+    m_gas = self.vol_gas * Air.p_he
     
     print(f"Payload Mass: {self.m_payload}kg")
     print(f"Balloon:\n \tSize: {balloon_mass}g \n\
-      \tInitial Diameter: {initial_diameter:.2f}m\n\
-      \tInitial Volume: {vol_gas:.2f}m3\n\
+      \tInitial Diameter: {initial_volume:.2f}m\n\
+      \tInitial Volume: {self.vol_gas:.2f}m3\n\
       \tBurst Diameter: {burst_diameter:.2f}m\n\
       \tExpected He Mass:  {m_gas:.4f}kg\n\
       \tDrag Coefficient: {drag_coef:.3f}")
@@ -103,7 +105,7 @@ class Balloon():
       self.drag_coeff = self.parachute_Dcoeff
       area = np.pi * (self.parachute_r) ** 2
     else: 
-      radius = ((3.0/4.0/np.pi) * self.volume(altitude)) ** (1/3)
+      radius = radius_sphere(self.volume(altitude))
       area: float = np.pi * radius * radius
     
     d: float = -(1/2) * self.drag_coeff * Air.density(altitude) * area * (abs(velocity)*velocity)

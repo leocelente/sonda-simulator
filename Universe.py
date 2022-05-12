@@ -12,3 +12,6 @@ molar_mass_he = 4.0026e-3 # kg/mol
 
 def vol_sphere(radius: float) -> float:
   return (4/3) * pi * radius**3
+
+def radius_sphere(volume:float) -> float:
+  return ((3.0/4.0/pi) *volume) ** (1/3)
