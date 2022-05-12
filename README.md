@@ -8,7 +8,9 @@ the design of an Altitude Control System.
 ## State
 **Working!**
 Seems to work, but a timestep >= 1s fails to converge.
+
 ![screenshot](assets/screenshot.png)
+![terminal](assets/terminal.png)
 
 ## Dependencies
 Just: 
@@ -34,6 +36,7 @@ $ source .venv/bin/activate
  Implements, simple 4th order Runge-Kutta integration.
  - `Utils.py`: some conversion functions that don't have a good place yet
  - `Local.py`: Placeholder for variables that could be of use in a future state of the project
+ - `Universe.py`: Mostly replaces `Utils.py` keeping purely mathematical formulas 
 
 The `main.py` code then creates an object of the class Balloon, and passes its collection o models
 to the Simulator,  that then does the integration step.
