@@ -2,48 +2,55 @@
 import time as t
 import sys
 from Simulator import Simulate
-from matplotlib import pyplot as plt
 import numpy as np
 from Instrument import probe
 from Balloon import Balloon
 from Visualization import Viz
 
 
-def status(percent):
-    percent = percent * 100.0
-    sys.stdout.write('Progress: \033[K' + ('%.2f' %  percent) + '%\r')
+def status(progress: float) -> None:
+    progress = progress * 100.0
+    sys.stdout.write('Progress: \033[K' + ('%.2f' % progress) + '%\r')
+
 
 def main():
-  state = np.vstack([ 0.0,  # velocity
-                      0.0   # acceleration
-  ])
 
-  print("-- Started Simulation --")
- 
-  # Simulate for 3 hours
-  tfinal: float = 3 * 60 * 60  
-  time_str = t.strftime("%Hh%Mm%Ss", t.gmtime(tfinal))
+    print("-- Started Simulation --")
 
-  print(f"Duration: {time_str}")
+    # Simulate for 3 hours
+    tfinal: float = 3 * 60 * 60
+    time_str = t.strftime("%Hh%Mm%Ss", t.gmtime(tfinal))
 
-  balloon = Balloon(balloon_mass=3000,                # 
-                              payload_mass=4,       #
-                              initial_volume=9,   #
-                              burst_diameter=7.86,       #
-                              drag_coef=0.35,         #
-                              parachute_diameter=1.5, #
-                              parachute_drag_coeff=0.6)
+    print(f"Duration: {time_str}")
 
-  
-  data, time = Simulate(state, balloon.Model, time_start = 0, time_end = tfinal, time_step=.5, status=status)
-  
-  
-  # Plot Simulation Data
-  data = np.array(data)
-  # Join probed data
-  data = np.column_stack((data, probe.get()))
+    models = {'Kaymond 3000': {"mass": 3000, "burst_d": 13},
+              'Kaymond 2000': {"mass": 2000, "burst_d": 10.5},
+              'Kaymond 1000': {"mass": 1000, "burst_d": 7.86}
+              }
+    model = "Kaymond 2000"
+    balloon = Balloon(balloon_mass=models[model]["mass"],                #
+                      payload_mass=2,       #
+                      initial_volume=9,   #
+                      burst_diameter=models[model]["burst_d"],       #
+                      drag_coef=0.35,         #
+                      parachute_diameter=1.5,
+                      parachute_drag_coeff=0.6)
 
-  Viz(data, time)
+    state = np.vstack([0.0,  # velocity
+                       0.0,   # acceleration
+                       balloon.initial_m_gas  # gas mass
+                       ])
+
+    data, time = Simulate(state, balloon.Model, time_start=0,
+                          time_end=tfinal, time_step=.5, status=status)
+
+    # Plot Simulation Data
+    data = np.array(data)
+    # Join probed data
+    data = np.column_stack((data, probe.get()))
+
+    Viz(data, time)
+
 
 if __name__ == '__main__':
     main()
