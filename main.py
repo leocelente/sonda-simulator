@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 import time as t
 import sys
-from Simulator import Simulate
 import numpy as np
+from Simulator import Simulate
 from Instrument import probe
 from Balloon import Balloon
 from Visualization import Viz
@@ -30,7 +30,7 @@ def main():
     model = "Kaymond 2000"
     balloon = Balloon(balloon_mass=models[model]["mass"],                #
                       payload_mass=2,       #
-                      initial_volume=9,   #
+                      initial_volume= 9,   #
                       burst_diameter=models[model]["burst_d"],       #
                       drag_coef=0.35,         #
                       parachute_diameter=1.5,

@@ -31,22 +31,23 @@ def Viz(data, time) -> None:
     burst_time, burst_altitude, i = find_burst(minutes, altitudes)
     print(f"Burst: {burst_time:.2f}min, {burst_altitude:.2f}km")
 
-    coefs = np.polyfit(minutes[:i//2], altitudes[:i//2], 1)
-    line = np.poly1d(coefs)
-    linear_burst_time = (burst_altitude - coefs[1]) / coefs[0]
-    print(
-        f"Linear Approx. Burst: {linear_burst_time:.2f}min, {line(linear_burst_time):.2f}km")
-    i = int(linear_burst_time / time_step * 60)
-
     fig = plt.figure(figsize=(14, 8))
     fig.suptitle('Simulation Results', fontsize=16)
 
     ax = plt.subplot(3, 3, 1)
-    plt.plot(minutes, altitudes, linewidth=2,
-             color="black", label='Altitude ($h$)')
-    plt.plot(minutes[:i], line(minutes[:i]), color='red')
-    plt.ylabel("Altitude (km)")
-    plt.grid()
+    if burst_time > minutes[1]:
+        print(f"Calculating Linear Aproximation...")
+        coefs = np.polyfit(minutes[:i//2], altitudes[:i//2], 1)
+        line = np.poly1d(coefs)
+        linear_burst_time = (burst_altitude - coefs[1]) / coefs[0]
+        print(
+            f"Linear Approx. Burst: {linear_burst_time:.2f}min, {line(linear_burst_time):.2f}km")
+        i = int(linear_burst_time / time_step * 60)
+        plt.plot(minutes, altitudes, linewidth=2,
+                 color="black", label='Altitude ($h$)')
+        plt.plot(minutes[:i], line(minutes[:i]), color='red')
+        plt.ylabel("Altitude (km)")
+        plt.grid()
 
     plt.subplot(3, 3, 2, sharex=ax)
     plt.plot(minutes, volume, linewidth=2,

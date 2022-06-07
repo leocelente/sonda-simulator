@@ -20,29 +20,29 @@ class Balloon():
     """Contains the numeric models to simulate the balloon ascent."""
 
     # Payload Mass
-    m_payload: float = 3.3
+    m_payload: float
     # Balloon Mass
-    m_balloon: float = 2000e-3
+    m_balloon: float
 
     # Initial Gas Volume
-    vol_gas_i: float = 9
+    vol_gas_i: float
 
     # Balllon Initial Radius
-    r_i: float = 1.4 / 2  # m
+    r_i: float
     # Balllon Burst Radius
-    r_f: float = 8.0 / 2  # m
+    r_f: float
     # Balllon Drag Coefficient
-    drag_coeff: float = 0.35
+    drag_coeff: float
     # Helps check if this iteration is a burst
-    burst: int = 0
+    burst: bool
     # Check if it hit the ground
-    touchdown: int = 0
+    touchdown: bool
 
     # Parachute Drag Coefficient
-    parachute_Dcoeff: float = 0.65
+    parachute_Dcoeff: float
     # Parachute Radius
-    parachute_r: float = 1.3
-    initial_m_gas: float = 0.
+    parachute_r: float
+    initial_m_gas: float
 
     def __init__(self, balloon_mass: float, payload_mass: float, initial_volume: float, burst_diameter: float, drag_coef: float, parachute_diameter: float, parachute_drag_coeff: float) -> None:
         """
@@ -65,6 +65,8 @@ class Balloon():
         self.parachute_Dcoeff = parachute_drag_coeff
         self.parachute_r = parachute_diameter / 2
         self.initial_m_gas = self.vol_gas * Air.p_he
+        self.touchdown = False
+        self.burst = False
 
         print(f"Payload Mass: {self.m_payload}kg")
         print(f"Balloon:\n \tSize: {balloon_mass}g \n\
@@ -88,9 +90,15 @@ class Balloon():
         # initial gas mass
         # m_0: float  = vol_sphere(self.r_i) * Air.p_he
         # m_gas = m_0                                     #! Assumption
-        pressure: float = Air.pressure(altitude)  # ! Assumption
-        temperature: float = Air.temperature(altitude)  # ! Assumption
+
+        pressure: float = Air.pressure(altitude)          # ! Assumption
+        # pressure =    4/3 * np.pi * g * self.density(altitude, m_gas) * altitude
+        temperature: float = Air.temperature(altitude)    # ! Assumption
         vol: float = m_gas * R * temperature / pressure / molar_mass_he
+
+        # radius = self.r_f + (self.r_i - self.r_f)/(Air.P_sl0 -
+        #                                            Air.P_sl2)*(Air.pressure(altitude) - Air.P_sl2)
+        # vol = vol_sphere(radius)
 
         if vol > burst_vol:  # in theory this condition means burst
             self.burst = True
@@ -141,23 +149,40 @@ class Balloon():
         return g * self.volume(altitude, m_gas) * (Air.density(altitude) - self.density(altitude, m_gas))
 
     def acceleration(self, altitude: float, velocity: float, m_gas: float) -> float:
-        """ Calculate the acceleration in meters per second square from altitude and (previous dt) velocity. """
+        """Calculate acceleration in m/s2 from altitude and (previous dt) velocity."""
         acc: float = (self.buoyancy(altitude, m_gas) + self.weight(m_gas) +
                       self.drag(altitude, velocity, m_gas)) / self.mass(m_gas)
-        if(self.touchdown >= 4):
+        self.r_i += 0.1
+        if(self.touchdown):
             # ! Assumption: Contact time of 0.5s
             acc = (0 - velocity)/(0.5 - 0)
         return acc
 
+    last_error = 0
+    acc_error = 0
+
     def valve(self, altitude: float, current_m_gas: float, velocity: float) -> float:
         """Gas Mass change by valve"""
-        vazao = 0.  # m3/s
-        K = 0.6
+        r = 0.01
+        area = np.pi * r * r
+        # vazao = area * (np.sqrt(2 * (self.pressure() - Air.pressure(altitude))))
 
-        if(altitude > 20e3):
-            vazao = K * velocity
-        if(altitude > 22e3):
-            vazao = 0.
+        vazao = 0
+
+        P = 0.1
+        I = 0.0
+        D = 0.01
+
+        setpoint = 0
+        error = velocity - setpoint
+        if(altitude > 19e3 and False):
+            vazao = P * error + I * (self.acc_error) + \
+                D * (error - self.last_error)
+
+        self.last_error = error
+        self.acc_error += error
+
+        self.acc_error = self.acc_error if self.acc_error < 10 else 0
 
         return -vazao * self.density(altitude, current_m_gas)
 
@@ -169,8 +194,8 @@ class Balloon():
         current_velocity: float = state[1][0]          # velocity
         current_m_gas: float = state[2][0]
 
-        if(current_altitude < 1e-3):
-            self.touchdown += 1
+        if self.burst and current_altitude < 1e-3:
+            self.touchdown = True
 
         delta = np.vstack([current_velocity,  # altitude
                            self.acceleration(
