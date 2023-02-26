@@ -5,19 +5,20 @@ Python Simulation of a High Altitude Balloon ascent and descent.
 Create a tool to help experiments involving HABs. Currently focusing efforts on
 the design of an Altitude Control System.
 
-## State
-**Working!**
-Seems to work, but a timestep >= 1s fails to converge.
-
+## Screenshots
+![map](assets/map.png)
 ![screenshot](assets/screenshot.png)
 ![terminal](assets/terminal.png)
 
-## Dependencies
-Just: 
+## Dependencies 
  - `numpy`
  - `matplotlib`
+ - `plotly`
+ - `pandas`
+ - `grequests`
+ - `scipy`
 
-Even so, please, use a virtual environment
+Please, use a virtual environment. 
 
 ## How to use
 ```shell
@@ -37,6 +38,7 @@ $ source .venv/bin/activate
  - `Utils.py`: some conversion functions that don't have a good place yet
  - `Local.py`: Placeholder for variables that could be of use in a future state of the project
  - `Universe.py`: Mostly replaces `Utils.py` keeping purely mathematical formulas 
+ - `thirdparty/`: Contains code from the [Astra Simulator](https://github.com/sobester/astra_simulator/) that handles Global Forecasting System communication and latitude/longitude conversions
 
 The `main.py` code then creates an object of the class Balloon, and passes its collection o models
 to the Simulator,  that then does the integration step.
