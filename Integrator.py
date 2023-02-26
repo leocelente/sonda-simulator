@@ -12,7 +12,7 @@ def RK4(model: Callable[[float, ndarray], ndarray], state_prev: ndarray, t_now: 
     Range-Kutta 4\nIntegra o estado `state_prev` pelo modelo `model`
     no passo `t_now` até o passo `t_now + t_step`
     '''
-    len = 3
+    len = 2 + 1 + 2
     state_prev = np.ravel(state_prev)
     state_prev = np.reshape(state_prev, (len, 1))
 

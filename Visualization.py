@@ -1,20 +1,23 @@
 from matplotlib import pyplot as plt
 import numpy as np
 from Utils import celcius
-
+import plotly.express as px
 
 def Viz(data, time) -> None:
     altitudes = data[:, 0] * 1e-3
     speed = data[:, 1]
     volume = data[:, 2]
-    volumes = data[:, 3]
-    buoyancy = data[:, 4]
-    drag = data[:, 5]
-    acceleration = data[:, 6]
-    weights = data[:, 7]
-    temperature = data[:, 8]
-    pressure = data[:, 9]
-    density = data[:, 10]
+    lats = data[:, 3]
+    lngs = data[:, 4]
+    volumes = data[:, 5]
+    buoyancy = data[:, 6]
+    drag = data[:, 7]
+    acceleration = data[:, 8]
+    weights = data[:, 9]
+    temperature = data[:, 10]
+    pressure = data[:, 11]
+    density = data[:, 12]
+
     time_step = time[1] - time[0]
     minutes = time / 60
 
@@ -102,5 +105,8 @@ def Viz(data, time) -> None:
     plt.xlabel("Time (min)")
     plt.ylabel("Pressure (kPa)")
     plt.grid()
+
+    fig = px.line_mapbox(lat=lats, lon=lngs, zoom=3, mapbox_style='open-street-map', height=300)
+    fig.show()
 
     plt.show()

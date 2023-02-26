@@ -6,7 +6,7 @@ from Simulator import Simulate
 from Instrument import probe
 from Balloon import Balloon
 from Visualization import Viz
-
+from  datetime import datetime
 
 def status(progress: float) -> None:
     progress = progress * 100.0
@@ -34,11 +34,15 @@ def main():
                       burst_diameter=models[model]["burst_d"],       #
                       drag_coef=0.35,         #
                       parachute_diameter=1.5,
+                      initial_loc=(-21.9, -47.0),
+                      start_date=datetime.now(),
                       parachute_drag_coeff=0.6)
 
     state = np.vstack([0.0,  # velocity
                        0.0,   # acceleration
-                       balloon.initial_m_gas  # gas mass
+                       balloon.initial_m_gas,  # gas mass
+                       balloon.initial_loc[0],
+                       balloon.initial_loc[1]
                        ])
 
     data, time = Simulate(state, balloon.Model, time_start=0,

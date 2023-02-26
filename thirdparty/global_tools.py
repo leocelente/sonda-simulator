@@ -7,7 +7,7 @@ analyze lists.
 from math import sqrt, exp, sin, cos, radians, atan, atan2, tan, pi, asin, sqrt
 import numpy as np
 import logging
-from six.moves.urllib.request import urlopen
+from urllib.request import urlopen
 import time
 import json
 

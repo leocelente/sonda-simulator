@@ -4,6 +4,10 @@ import Air
 from Universe import radius_sphere, vol_sphere, molar_mass_he, g, R
 from Instrument import probe
 from numpy import ndarray
+from datetime import datetime, timedelta
+from thirdparty.GFS import GFS_Handler
+from thirdparty.global_tools import dirspeed2uv, m2deg
+from typing import Callable
 
 # ? Mass:           Kilogram
 # ? Preassure:      Pascal
@@ -43,8 +47,16 @@ class Balloon():
     # Parachute Radius
     parachute_r: float
     initial_m_gas: float
+    initial_loc: tuple[float, float]
+    start_date: datetime
+    # All are generated with signature: (latitude, longitude, altitude, gfs_time) -> float
+    forecast_pressure = Callable[[float, float, float, float], float]
+    forecast_temperature = Callable[[float, float, float, float], float]
+    forecast_wind_dir = Callable[[float, float, float, float], float]
+    forecast_wind_spd = Callable[[float, float, float, float], float]
+    gfs_link: GFS_Handler
 
-    def __init__(self, balloon_mass: float, payload_mass: float, initial_volume: float, burst_diameter: float, drag_coef: float, parachute_diameter: float, parachute_drag_coeff: float) -> None:
+    def __init__(self, balloon_mass: float, payload_mass: float, initial_volume: float, burst_diameter: float, drag_coef: float, parachute_diameter: float, initial_loc: tuple[float, float], start_date: datetime, parachute_drag_coeff: float) -> None:
         """
         Create balloon object.
 
@@ -67,6 +79,8 @@ class Balloon():
         self.initial_m_gas = self.vol_gas * Air.p_he
         self.touchdown = False
         self.burst = False
+        self.start_date = start_date
+        self.initial_loc = initial_loc
 
         print(f"Payload Mass: {self.m_payload}kg")
         print(f"Balloon:\n \tSize: {balloon_mass}g \n\
@@ -79,12 +93,21 @@ class Balloon():
         print(
             f"Parachute: \n \tOpen Diameter: {parachute_diameter:.2f}m\n \tDrag Coefficient: {parachute_drag_coeff:.3f}")
 
-
-
+        self.gfs_link = GFS_Handler(
+            self.initial_loc[0], self.initial_loc[1], self.start_date)
+        print(f"Downloading Forecast data from NASA's GFS...")
+        self.gfs_link.downloadForecast()
+        print(f"Complete")
+        getTemp, getPress = self.gfs_link.interpolateData('temperature', 'pressure')
+        getDir, getSpd = self.gfs_link.interpolateData('wind_direction', 'wind_speed')
+        self.forecast_temperature = getTemp
+        self.forecast_pressure = getPress
+        self.forecast_wind_dir = getDir
+        self.forecast_wind_spd = getSpd
 
     def volume(self, altitude: float, m_gas: float) -> float:
         """Calculate (simplified) the balloon's volume in cubic meters at altitude in meters."""
-        if(self.burst):
+        if (self.burst):
             return 0
 
         burst_vol: float = vol_sphere(self.r_f)
@@ -108,12 +131,9 @@ class Balloon():
 
         return vol
 
-
-
-
     def drag(self, altitude: float, velocity: float, m_gas: float) -> float:
         """Calculate the drag force at altitude in meters while moving at velocity in meters per second."""
-        if(self.burst):
+        if (self.burst):
             self.drag_coeff = self.parachute_Dcoeff
             area = np.pi * (self.parachute_r) ** 2
         else:
@@ -124,58 +144,45 @@ class Balloon():
             Air.density(altitude) * area * (abs(velocity)*velocity)
         return d
 
-
-
-
     def mass(self, m_gas: float) -> float:
         """Calculate current system mass."""
         # Expected Helium Mass
         # m_gas: float = vol_sphere(self.r_i) * Air.p_he
 
-        if(self.burst):
+        if (self.burst):
             self.m_balloon = 0
             self.m_gas = 0
 
         mass: float = self.m_payload + self.m_balloon + m_gas
         return mass
 
-
-
     def weight(self, m_gas: float) -> float:
         """Total Weight."""
         # m_gas: float = vol_sphere(self.r_i) * Air.p_he
         return -(self.mass(m_gas)) * g
 
-
-
     def density(self, altitude: float, m_gas: float) -> float:
         """Calculate current gas density inside balloon (He)."""
-        if(self.burst):
+        if (self.burst):
             return 0
 
         # m_gas: float =  vol_sphere(self.r_i) * Air.p_he
         rho_he = m_gas / self.volume(altitude, m_gas)
         return rho_he
 
-
-
     def buoyancy(self, altitude: float, m_gas: float) -> float:
         """Calculate the Buoyancy force at a given altitude."""
         return g * self.volume(altitude, m_gas) * (Air.density(altitude) - self.density(altitude, m_gas))
-
-
 
     def acceleration(self, altitude: float, velocity: float, m_gas: float) -> float:
         """Calculate acceleration in m/s2 from altitude and (previous dt) velocity."""
         acc: float = (self.buoyancy(altitude, m_gas) + self.weight(m_gas) +
                       self.drag(altitude, velocity, m_gas)) / self.mass(m_gas)
         self.r_i += 0.1
-        if(self.touchdown):
+        if (self.touchdown):
             # ! Assumption: Contact time of 0.5s
             acc = (0 - velocity)/(0.5 - 0)
         return acc
-
-
 
     last_error = 0
     acc_error = 0
@@ -194,7 +201,7 @@ class Balloon():
 
         setpoint = 0
         error = velocity - setpoint
-        if(altitude > 19e3 and False):
+        if (altitude > 19e3 and False):
             vazao = P * error + I * (self.acc_error) + \
                 D * (error - self.last_error)
 
@@ -207,13 +214,24 @@ class Balloon():
 
     _i = 0
 
-
+    def delta_loc(self, lat, lng, alt, velocity: float, time) -> float:
+        # direction in [degrees] clockwise from north
+        dir_deg = self.forecast_wind_dir(lat, lng, alt, self.gfs_link.getGFStime(
+            self.start_date+timedelta(seconds=time)))
+        # speed in [knots]
+        spd_knots = self.forecast_wind_spd(lat, lng, alt, self.gfs_link.getGFStime(
+            self.start_date+timedelta(seconds=time)))
+        spd = spd_knots * 0.514444 # m/s
+        u,v = dirspeed2uv(dir_deg, spd)
+        return m2deg(u, v, lat)
 
     def Model(self, t: float, state: list[list[float]]) -> ndarray:
         """Calculate the derivative (delta state) to be integrated on simulation step."""
         current_altitude: float = state[0][0]          # altitude
         current_velocity: float = state[1][0]          # velocity
         current_m_gas: float = state[2][0]
+        current_lat: float = state[3][0]
+        current_lng: float = state[4][0]
 
         if self.burst and current_altitude < 1e-3:
             self.touchdown = True
@@ -222,7 +240,9 @@ class Balloon():
                            self.acceleration(
                                current_altitude, current_velocity, current_m_gas),  # velocity
                            self.valve(current_altitude,
-                                      current_m_gas, current_velocity),
+                                      current_m_gas, current_velocity), # volume
+                           *self.delta_loc(current_lat, current_lng,
+                                          current_altitude, current_velocity, t) # lat, lng
                            ])
 
         probe(self.volume(current_altitude, current_m_gas), 0)

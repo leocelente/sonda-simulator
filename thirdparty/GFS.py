@@ -11,8 +11,9 @@ University of Southampton
 """
 from datetime import datetime, timedelta
 from math import floor, ceil
-from six.moves import range, builtins
-from six.moves.urllib.request import urlopen
+# from six.moves import range, builtins
+import builtins
+from urllib.request import urlopen
 import logging
 import grequests
 import itertools
