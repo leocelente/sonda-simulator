@@ -79,6 +79,9 @@ class Balloon():
         print(
             f"Parachute: \n \tOpen Diameter: {parachute_diameter:.2f}m\n \tDrag Coefficient: {parachute_drag_coeff:.3f}")
 
+
+
+
     def volume(self, altitude: float, m_gas: float) -> float:
         """Calculate (simplified) the balloon's volume in cubic meters at altitude in meters."""
         if(self.burst):
@@ -105,6 +108,9 @@ class Balloon():
 
         return vol
 
+
+
+
     def drag(self, altitude: float, velocity: float, m_gas: float) -> float:
         """Calculate the drag force at altitude in meters while moving at velocity in meters per second."""
         if(self.burst):
@@ -118,6 +124,9 @@ class Balloon():
             Air.density(altitude) * area * (abs(velocity)*velocity)
         return d
 
+
+
+
     def mass(self, m_gas: float) -> float:
         """Calculate current system mass."""
         # Expected Helium Mass
@@ -130,10 +139,14 @@ class Balloon():
         mass: float = self.m_payload + self.m_balloon + m_gas
         return mass
 
+
+
     def weight(self, m_gas: float) -> float:
         """Total Weight."""
         # m_gas: float = vol_sphere(self.r_i) * Air.p_he
         return -(self.mass(m_gas)) * g
+
+
 
     def density(self, altitude: float, m_gas: float) -> float:
         """Calculate current gas density inside balloon (He)."""
@@ -144,9 +157,13 @@ class Balloon():
         rho_he = m_gas / self.volume(altitude, m_gas)
         return rho_he
 
+
+
     def buoyancy(self, altitude: float, m_gas: float) -> float:
         """Calculate the Buoyancy force at a given altitude."""
         return g * self.volume(altitude, m_gas) * (Air.density(altitude) - self.density(altitude, m_gas))
+
+
 
     def acceleration(self, altitude: float, velocity: float, m_gas: float) -> float:
         """Calculate acceleration in m/s2 from altitude and (previous dt) velocity."""
@@ -157,6 +174,8 @@ class Balloon():
             # ! Assumption: Contact time of 0.5s
             acc = (0 - velocity)/(0.5 - 0)
         return acc
+
+
 
     last_error = 0
     acc_error = 0
@@ -187,6 +206,8 @@ class Balloon():
         return -vazao * self.density(altitude, current_m_gas)
 
     _i = 0
+
+
 
     def Model(self, t: float, state: list[list[float]]) -> ndarray:
         """Calculate the derivative (delta state) to be integrated on simulation step."""

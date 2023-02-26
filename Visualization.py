@@ -22,7 +22,7 @@ def Viz(data, time) -> None:
         i = 1
         current = y[i]
         previous = y[i-1]
-        while(current > previous):
+        while(current > previous and i < len(y)):
             current = y[i]
             previous = y[i-1]
             i += 1

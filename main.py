@@ -23,14 +23,14 @@ def main():
 
     print(f"Duration: {time_str}")
 
-    models = {'Kaymond 3000': {"mass": 3000, "burst_d": 13},
+    models = {'Kaymond 3000': {"mass": 3000, "burst_d": 13.0},
               'Kaymond 2000': {"mass": 2000, "burst_d": 10.5},
               'Kaymond 1000': {"mass": 1000, "burst_d": 7.86}
               }
-    model = "Kaymond 2000"
+    model = "Kaymond 3000"
     balloon = Balloon(balloon_mass=models[model]["mass"],                #
-                      payload_mass=2,       #
-                      initial_volume= 9,   #
+                      payload_mass=3,       #
+                      initial_volume=8,   #
                       burst_diameter=models[model]["burst_d"],       #
                       drag_coef=0.35,         #
                       parachute_diameter=1.5,
